@@ -20,8 +20,19 @@ app.get('/', (req, res) => {
     res.render('login')
 })
 
+app.get('/home', (req, res) => {
+    res.render('home')
+})
+
 app.post('/login', (req, res) => {
-    console.log("tela login")
+    const {username, password} = req.body;
+    
+    if(username === 'usuario' && password === '123'){
+        req.session.loggedIn = true
+        res.redirect('/home')
+    } else {
+        res.redirect('/')
+    }
 })
 
 app.listen(3000, () => console.log("servidor na porta 3000"))
