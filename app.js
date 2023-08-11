@@ -1,12 +1,15 @@
 const express = require('express')
 const session = require('express-session')
+const cors = require('cors')
 const bodyParser = require('body-parser')
 const path = require('path')
 
 const app = express();
 
 // Configuração de middleware
+app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true}))
+app.use(bodyParser.json());
 app.use(session({
     secret: 'segredo',
     resave: false,
@@ -21,17 +24,34 @@ app.get('/', (req, res) => {
 })
 
 app.get('/home', (req, res) => {
-    res.render('home')
+    if(req.session.loggedIn){
+        res.render('home')
+    } else {
+        res.redirect('/')
+    }
+})
+
+app.get('/logout', (req, res) => {
+    res.clearCookie('loggedIn');
+    req.session.loggedIn = false
+    res.redirect('/')
+    console.log("req, depois", req.session)
+
+
 })
 
 app.post('/login', (req, res) => {
     const {username, password} = req.body;
+
+    console.log("user", username, "login", password)
     
     if(username === 'usuario' && password === '123'){
         req.session.loggedIn = true
-        res.redirect('/home')
+        res.status(200).json({sucess: true, message: "Login realizado com sucesso"})
+        //return res.redirect('/home')
+
     } else {
-        res.redirect('/')
+        return res.status(401).json({success: false, message: 'Login inválido'})
     }
 })
 
