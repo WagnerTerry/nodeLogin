@@ -2,6 +2,7 @@ const express = require('express')
 const session = require('express-session')
 const bodyParser = require('body-parser')
 const path = require('path')
+const db = require('./src/models/db')
 
 const app = express();
 
@@ -19,6 +20,17 @@ app.set('view engine', 'ejs')
 // Rotas
 app.get('/', (req, res) => {
     res.render('login')
+})
+
+app.get('/users', (req, res) => {
+    db.query('select * from users', (err, results) => {
+        if(err){
+            console.error('erro ao executar consulta: ', err);
+            res.status(500).send('Erro no servidor')
+            return
+        }
+        res.json(results)
+    })
 })
 
 app.get('/home', (req, res) => {
