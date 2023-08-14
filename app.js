@@ -17,20 +17,9 @@ app.use(session({
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'src', 'views'));
 
-// Rotas
+// Rotas View
 app.get('/', (req, res) => {
     res.render('login', {title: "teste"})
-})
-
-app.get('/users', (req, res) => {
-    db.query('select * from users', (err, results) => {
-        if(err){
-            console.error('erro ao executar consulta: ', err);
-            res.status(500).send('Erro no servidor')
-            return
-        }
-        res.json(results)
-    })
 })
 
 app.get('/home', (req, res) => {
@@ -58,6 +47,34 @@ app.post('/login', (req, res) => {
     } else {
         return res.status(401).json({success: false, message: 'Login inválido'})
     }
+})
+
+// Rotas banco de dados
+app.get('/users', (req, res) => {
+    db.query('select * from users', (err, results) => {
+        if(err){
+            console.error('erro ao executar consulta: ', err);
+            res.status(500).send('Erro no servidor')
+            return
+        }
+        res.json(results)
+
+    })
+})
+
+app.post('/users', (req, res) => {
+    const {nome} = req.body
+
+    db.query('insert into users (nome) values (?)',
+     [nome],
+     (err, results) => {
+        if(err){
+            res.status(500).json({err});
+            return;
+        }
+        res.status(201).json({success: true, message: "Usuario adicionado com sucesso", id: results.insertId})
+    })
+
 })
 
 app.listen(3000, () => console.log("servidor na porta 3000"))
