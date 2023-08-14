@@ -69,12 +69,35 @@ app.post('/users', (req, res) => {
      [nome],
      (err, results) => {
         if(err){
-            res.status(500).json({err});
+            res.status(500).json({success: false, error: err});
             return;
         }
         res.status(201).json({success: true, message: "Usuario adicionado com sucesso", id: results.insertId})
     })
-
 })
+
+app.put('/users/:id', (req, res) => {
+    const id = req.params.id
+    const nome = req.body
+
+
+    db.query('update users set nome = ? where id = ?', 
+    
+    [nome, id],
+    (err, results) => {
+
+        if(err){
+            return res.status(500).json({success: false, error: err})
+        }
+
+        if(results.affectedRows === 0){
+            return res.status(404).json({success: false, message: "Usuário não encontrado"})
+        }
+
+        return res.status(200).json({success: true, message: 'Usuário atualizado'})
+    }
+    )
+})
+
 
 app.listen(3000, () => console.log("servidor na porta 3000"))
