@@ -14,12 +14,12 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }))
-app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname, 'src', 'views'));
 
 // Rotas
 app.get('/', (req, res) => {
-    res.render('login')
+    res.render('login', {title: "teste"})
 })
 
 app.get('/users', (req, res) => {
