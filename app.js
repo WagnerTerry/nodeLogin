@@ -99,5 +99,6 @@ app.put('/users/:id', (req, res) => {
     )
 })
 
+module.exports = app
 
-app.listen(3000, () => console.log("servidor na porta 3000"))
+//app.listen(3000, () => console.log("servidor na porta 3000"))
