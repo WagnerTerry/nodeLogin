@@ -99,6 +99,24 @@ app.put('/users/:id', (req, res) => {
     )
 })
 
+app.delete('/users/:id', (req, res) => {
+    const id = req.params.id
+
+    db.query('delete from users where id = ?', 
+    [id],
+    (err, results) => {
+        if(err){
+            return res.status(500).json({sucess: false, error: err})
+        }
+
+        if(results.affectedRows === 0){
+            return res.status(404).json({success: false, error: "Usuário não encontrado"})
+        }
+        return res.status(204).send()
+    }
+    )
+})
+
 module.exports = app
 
 //app.listen(3000, () => console.log("servidor na porta 3000"))
