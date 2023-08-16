@@ -20,7 +20,7 @@ describe('Testes usando o banco mysql', () => {
     afterAll(() => {
         connection.end();
     })
-    it.only('Listar usuários do banco', async () => {
+    it('Listar usuários do banco', async () => {
         // Inserindo alguns usuarios
         // await connection.promise().query('insert into users (nome) values (?)', ['joao']);
         // await connection.promise().query('insert into users (nome) values (?)', ['gabi']);
@@ -44,5 +44,20 @@ describe('Testes usando o banco mysql', () => {
         expect(response.statusCode).toEqual(201);
         expect(response.body.success).toBe(true);
         expect(response.body.message).toBe('Usuario adicionado com sucesso')
+    })
+    it.only("Deve excluir um usuário com sucesso", async () => {
+        //const [insertResult] = await connection.promise().query('insert into users (id, nome) values (?,?)',[1, 'Robson'])
+
+        //const userId = insertResult.insertId;
+
+        const response = await request(app)
+            .delete(`/users/2}`)
+            .send()
+
+        expect(response.statusCode).toEqual(204)
+
+        //  Verificar se o usuário foi removido do banco de dados
+        const [rows] = await connection.promise().query('select * from users where  id = ?', [2]);
+        expect(rows.length).toBe(0);
     })
 })
