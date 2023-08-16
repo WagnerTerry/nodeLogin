@@ -20,7 +20,7 @@ describe('Testes usando o banco mysql', () => {
     afterAll(() => {
         connection.end();
     })
-    it('Listar usuários do banco', async () => {
+    it.only('Listar usuários do banco', async () => {
         // Inserindo alguns usuarios
         // await connection.promise().query('insert into users (nome) values (?)', ['joao']);
         // await connection.promise().query('insert into users (nome) values (?)', ['gabi']);
@@ -29,7 +29,10 @@ describe('Testes usando o banco mysql', () => {
             .get('/users')
             .send()
 
-        expect(response.statusCode).toEqual(200)
+        expect(response.status).toBe(200)
+        expect(response.body).toEqual(expect.any(Array)); // Verifica se a resposta é um array
+        expect(response.body.length).toBeGreaterThan(0); // Verifica se há pelo menos um usuário na resposta.
+        // expect(response.body).toHaveLength(0); // Verifica se a resposta está vazia
     })
     it('Deve inserir um novo usuário com sucesso', async () => {
         const response = await request(app)
