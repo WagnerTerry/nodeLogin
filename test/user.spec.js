@@ -46,18 +46,23 @@ describe('Testes usando o banco mysql', () => {
         expect(response.body.message).toBe('Usuario adicionado com sucesso')
     })
     it.only("Deve excluir um usuário com sucesso", async () => {
-        //const [insertResult] = await connection.promise().query('insert into users (id, nome) values (?,?)',[1, 'Robson'])
+        const [[users]] = await connection.promise().query('select id from users limit 1;')
+        const userId = users.id
+        console.log("insert", userId)
+        // const userId = insertResult.insertId;
 
-        //const userId = insertResult.insertId;
+         const response = await request(app)
+         .delete(`/users/${userId}`)
+         .send()
+         
+         console.log("respon", response.body)
+         
+         
+         expect(response.statusCode).toEqual(204);
+         await connection.promise().query('delete from users where id = ?', [userId])
 
-        const response = await request(app)
-            .delete(`/users/2}`)
-            .send()
-
-        expect(response.statusCode).toEqual(204)
-
-        //  Verificar se o usuário foi removido do banco de dados
-        const [rows] = await connection.promise().query('select * from users where  id = ?', [2]);
+        // Verificar se o usuário foi removido do banco de dados
+        const [rows] = await connection.promise().query('select * from users where  id = ?', [userId]);
         expect(rows.length).toBe(0);
     })
 })
