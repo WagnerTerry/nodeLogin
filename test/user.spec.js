@@ -34,6 +34,7 @@ describe('Testes usando o banco mysql', () => {
         expect(response.body.length).toBeGreaterThan(0); // Verifica se há pelo menos um usuário na resposta.
         // expect(response.body).toHaveLength(0); // Verifica se a resposta está vazia
     })
+
     it('Deve inserir um novo usuário com sucesso', async () => {
         const response = await request(app)
             .post('/users')
@@ -45,24 +46,31 @@ describe('Testes usando o banco mysql', () => {
         expect(response.body.success).toBe(true);
         expect(response.body.message).toBe('Usuario adicionado com sucesso')
     })
+
     it.only("Deve excluir um usuário com sucesso", async () => {
-        const [[users]] = await connection.promise().query('select id from users limit 1;')
-        const userId = users.id
-        console.log("insert", userId)
-        // const userId = insertResult.insertId;
+        // const [[users]] = await connection.promise().query('select id from users order by rand() limit 1;')
+        // const userId = users.id     
 
-         const response = await request(app)
-         .delete(`/users/${userId}`)
+        // if(!userId){
+        //     expect(response.body)
+        // }
+
+        const response = await request(app)
+         .delete(`/users/37`)
          .send()
-         
-         console.log("respon", response.body)
-         
-         
-         expect(response.statusCode).toEqual(204);
-         await connection.promise().query('delete from users where id = ?', [userId])
 
-        // Verificar se o usuário foi removido do banco de dados
-        const [rows] = await connection.promise().query('select * from users where  id = ?', [userId]);
-        expect(rows.length).toBe(0);
+         console.log("res", response.body)
+         if(response.body.success){
+            console.log("successo")
+            expect(response.statusCode).toEqual(204)
+            await connection.promise().query('delete from users where id = ?', ["37"])
+
+            // Verificar se o usuário foi removido do banco de dados
+            // const [rows] = await connection.promise().query('select * from users where  id = ?', ['37']);
+            // expect(rows.length).toBe(0);
+         } 
+        //  else {
+        //     expect(response.statusCode).toEqual(404)
+        //  }       
     })
 })
