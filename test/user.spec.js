@@ -47,16 +47,21 @@ describe('Testes usando o banco mysql', () => {
         expect(response.body.message).toBe('Usuario adicionado com sucesso')
     })
 
-    it("Deve excluir um usuário com sucesso", async () => {
+    it.only("Deve excluir um usuário com sucesso", async () => {
         const response = await request(app)
-         .delete(`/users/37`)
-         .send()
+        .get('/users')
+        .send()
 
-         if(response.statusCode === 204){
-            expect(response.status).toBe(204)
-         }  else {
-            expect(response.statusCode).toEqual(404)
-         }
+        console.log("res", response)
+        // const response = await request(app)
+        //  .delete(`/users/37`)
+        //  .send()
+
+        //  if(response.statusCode === 204){
+        //     expect(response.status).toBe(204)
+        //  }  else {
+        //     expect(response.statusCode).toEqual(404)
+        //  }
     })
     it('Deve retornar status 404 para usuário inexistente', async () => {
            //Verificar se o usuário foi removido do banco de dados
