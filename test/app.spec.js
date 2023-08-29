@@ -1,5 +1,5 @@
-const request = require('supertest')
-const app = require('../app')
+// const request = require('supertest')
+// const app = require('../app')
 
 // describe('Teste para conexão com o banco', () => {
 //     it('Deve retornar uma lista de usuarios', async () => {

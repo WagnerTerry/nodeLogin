@@ -29,6 +29,7 @@ describe('Testes usando o banco mysql', () => {
             .get('/users')
             .send()
 
+
         expect(response.status).toBe(200)
         expect(response.body).toEqual(expect.any(Array)); // Verifica se a resposta é um array
         expect(response.body.length).toBeGreaterThan(0); // Verifica se há pelo menos um usuário na resposta.
@@ -47,12 +48,11 @@ describe('Testes usando o banco mysql', () => {
         expect(response.body.message).toBe('Usuario adicionado com sucesso')
     })
 
-    it.only("Deve excluir um usuário com sucesso", async () => {
+    it("Deve excluir um usuário com sucesso aaa", async () => {
         const response = await request(app)
         .get('/users')
         .send()
 
-        console.log("res", response)
         // const response = await request(app)
         //  .delete(`/users/37`)
         //  .send()
