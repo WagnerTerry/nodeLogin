@@ -1,9 +1,9 @@
+require('dotenv').config();
 const express = require('express')
 const session = require('express-session')
 const bodyParser = require('body-parser')
 const path = require('path')
 
-require('dotenv').config();
 const db = process.env.DB_ENV === "test" ? require('./src/models/dbConfig.test') : require('./src/models/dbConfig')
 
 const app = express();
