@@ -29,7 +29,6 @@ describe('Testes usando o banco mysql', () => {
             .get('/users')
             .send()
 
-
         expect(response.status).toBe(200)
         expect(response.body).toEqual(expect.any(Array)); // Verifica se a resposta é um array
         expect(response.body.length).toBeGreaterThan(0); // Verifica se há pelo menos um usuário na resposta.
@@ -40,7 +39,6 @@ describe('Testes usando o banco mysql', () => {
         const response = await request(app)
             .post('/users')
             .send({
-                id: 1,
                 nome: 'Joao'
             })
         expect(response.statusCode).toEqual(201);
@@ -48,20 +46,33 @@ describe('Testes usando o banco mysql', () => {
         expect(response.body.message).toBe('Usuario adicionado com sucesso')
     })
 
-    it("Deve excluir um usuário com sucesso aaa", async () => {
-        const response = await request(app)
-        .get('/users')
-        .send()
+    it.only("Deve excluir um usuário com sucesso", async () => {
+        const [users] = await connection.promise().query('select * from users');
 
+        if(!users.length){
+            console.log("if", users)
+            expect(users).toEqual([])
+            return
+            
+        }
+        const userId = users[0].id
         // const response = await request(app)
-        //  .delete(`/users/37`)
-        //  .send()
+        // .get(`/users/${userId}`)
+        // .send()
 
-        //  if(response.statusCode === 204){
-        //     expect(response.status).toBe(204)
-        //  }  else {
-        //     expect(response.statusCode).toEqual(404)
-        //  }
+        console.log("res", userId)
+
+        const response = await request(app)
+         .delete(`/users/${userId}`)
+         .send()
+        console.log("response", response.status)
+        expect(response.status).toBe(204)
+
+         if(response.statusCode === 204){
+            expect(response.status).toBe(204)
+         }  else {
+            expect(response.statusCode).toEqual(404)
+         }
     })
     it('Deve retornar status 404 para usuário inexistente', async () => {
            //Verificar se o usuário foi removido do banco de dados
