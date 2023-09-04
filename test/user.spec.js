@@ -50,16 +50,13 @@ describe('Testes usando o banco mysql', () => {
         const [users] = await connection.promise().query('select * from users');
 
         if(!users.length){
-            console.log("ifa", users)
             expect(users).toHaveLength(0)
             return 
-            
         }
         const userId = users[0].id
 
         const response = await request(app)
          .delete(`/users/${userId}`)
-        console.log("response", response)
         expect(response.status).toBe(204)
         return
     })
