@@ -46,33 +46,22 @@ describe('Testes usando o banco mysql', () => {
         expect(response.body.message).toBe('Usuario adicionado com sucesso')
     })
 
-    it.only("Deve excluir um usuário com sucesso", async () => {
+    it("Deve excluir um usuário com sucesso", async () => {
         const [users] = await connection.promise().query('select * from users');
 
         if(!users.length){
-            console.log("if", users)
-            expect(users).toEqual([])
-            return
+            console.log("ifa", users)
+            expect(users).toHaveLength(0)
+            return 
             
         }
         const userId = users[0].id
-        // const response = await request(app)
-        // .get(`/users/${userId}`)
-        // .send()
-
-        console.log("res", userId)
 
         const response = await request(app)
          .delete(`/users/${userId}`)
-         .send()
-        console.log("response", response.status)
+        console.log("response", response)
         expect(response.status).toBe(204)
-
-         if(response.statusCode === 204){
-            expect(response.status).toBe(204)
-         }  else {
-            expect(response.statusCode).toEqual(404)
-         }
+        return
     })
     it('Deve retornar status 404 para usuário inexistente', async () => {
            //Verificar se o usuário foi removido do banco de dados
