@@ -20,6 +20,7 @@ describe('Testes usando o banco mysql', () => {
     afterAll(() => {
         connection.end();
     })
+
     it('Listar usuários do banco', async () => {
         // Inserindo alguns usuarios
         // await connection.promise().query('insert into users (nome) values (?)', ['joao']);
@@ -35,6 +36,26 @@ describe('Testes usando o banco mysql', () => {
         // expect(response.body).toHaveLength(0); // Verifica se a resposta está vazia
     })
 
+    it('Deve buscar um usuário por id', async () => {
+        const userId = 60
+
+        const response = await request(app)
+            .get(`/users/${userId}`)
+
+        const { success, message } = response.body
+
+        if (success) {
+            expect(response.status).toBe(200)
+            return;
+        }
+
+        expect(response.statusCode).toEqual(404)
+        expect(message).toBe("Usuário não encontrado")
+        return;
+
+
+    })
+
     it('Deve inserir um novo usuário com sucesso', async () => {
         const response = await request(app)
             .post('/users')
@@ -46,41 +67,47 @@ describe('Testes usando o banco mysql', () => {
         expect(response.body.message).toBe('Usuario adicionado com sucesso')
     })
 
-    it.only('Deve atualizar um usuário e retornar status code 200', async () => {
+    it('Deve atualizar um usuário e retornar status code 200', async () => {
         const userIdToUpdate = 591; // Id do usuario para atualizar
-        const updatedUserData = {id: userIdToUpdate, nome: "Joao Jest"}
+        const updatedUserData = { id: userIdToUpdate, nome: "Joao Jest" }
 
         // Usando o supertest para enviar uma solicitação PUT à rota de atualização
         const response = await request(app)
             .put(`/users/${userIdToUpdate}`)
             .send(updatedUserData)
-            
-        if(response.body.success){
+
+        const { success, message } = response.body
+
+        if (success) {
             expect(response.status).toBe(200)
             return;
         }
-        // expect(response.statusCode).toEqual(404)
-        // return
+
+        expect(response.statusCode).toEqual(404)
+        expect(message).toBe("Usuário não encontrado")
+        return;
+
     })
 
     it("Deve excluir um usuário com sucesso", async () => {
         const [users] = await connection.promise().query('select * from users');
 
-        if(!users.length){
+        if (!users.length) {
             expect(users).toHaveLength(0)
-            return 
+            return
         }
         const userId = users[0].id
 
         const response = await request(app)
-         .delete(`/users/${userId}`)
-        
+            .delete(`/users/${userId}`)
+
         expect(response.status).toBe(204)
         return
     })
-    
-    it.only('Deve retornar status 404 para usuário inexistente', async () => {
-           const [rows] = await connection.promise().query('select * from users where  id = ?', ['9999']);
-           expect(rows.length).toBe(0);
+
+    it('Deve retornar status 404 para usuário inexistente', async () => {
+        const [rows] = await connection.promise().query('select * from users where  id = ?', ['9999']);
+        expect(rows.length).toBe(0);
     })
+
 })
