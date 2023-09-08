@@ -1,19 +1,14 @@
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
-const bodyParser = require("body-parser");
 const path = require("path");
-
-const db =
-  process.env.DB_ENV === "test"
-    ? require("./src/models/dbConfig.test")
-    : require("./src/models/dbConfig");
+const users = require('./src/routes/users')
 
 const app = express();
 
 // Configuração de middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(
   session({
     secret: "segredo",
@@ -54,98 +49,8 @@ app.post("/login", (req, res) => {
   }
 });
 
-// Rotas banco de dados
-app.get("/users", (req, res) => {
-  db.query("select * from users", (err, results) => {
-    if (err) {
-      console.error("erro ao executar consulta: ", err);
-      res.status(500).send("Erro no servidor");
-      return;
-    }
-    res.json(results);
-  });
-});
-
-app.get("/users/:id", async (req, res) => {
-  const id = parseInt(req.params.id);
-
-  db.query("select * from users where id = ?", [id], (err, results) => {
-    if (err) {
-      return res
-        .status(500)
-        .json({ success: false, error: "Erro interno no servidor" });
-    }
-
-    if (results.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Usuário não encontrado" });
-    }
-
-    return res.status(200).json({ success: true, data: results[0] });
-  });
-});
-
-app.post("/users", (req, res) => {
-  const { nome } = req.body;
-
-  db.query("insert into users (nome) values (?)", [nome], (err, results) => {
-    if (err) {
-      res.status(500).json({ success: false, error: err });
-      return;
-    }
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Usuario adicionado com sucesso",
-        id: results.insertId,
-      });
-  });
-});
-
-app.put("/users/:id", (req, res) => {
-  const id = req.params.id;
-  const nome = req.body;
-
-  db.query(
-    "update users set nome = ? where id = ?",
-
-    [nome, id],
-    (err, results) => {
-      if (err) {
-        return res.status(500).json({ success: false, error: err });
-      }
-
-      if (results.affectedRows === 0) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Usuário não encontrado" });
-      }
-
-      return res
-        .status(200)
-        .json({ success: true, message: "Usuário atualizado" });
-    }
-  );
-});
-
-app.delete("/users/:id", (req, res) => {
-  const id = req.params.id;
-
-  db.query("delete from users where id = ?", [id], (err, results) => {
-    if (err) {
-      return res.status(500).json({ sucess: false, error: err });
-    }
-
-    if (results.affectedRows === 0) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Usuário não encontrado" });
-    }
-    return res.status(204).send();
-  });
-});
+// Rotas com banco de dados
+app.use('/users', users)
 
 module.exports = app;
 
