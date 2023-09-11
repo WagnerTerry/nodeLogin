@@ -60,7 +60,8 @@ describe('Testes usando o banco mysql', () => {
         const response = await request(app)
             .post('/users')
             .send({
-                nome: 'Joao'
+                nome: 'Joao',
+                senha: "1243"
             })
         expect(response.statusCode).toEqual(201);
         expect(response.body.success).toBe(true);
