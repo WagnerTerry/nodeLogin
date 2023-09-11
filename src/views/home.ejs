@@ -6,6 +6,28 @@
     <body>
         <div class="container">
             <h1>Home</h1>
+
+            <div class="register-user">
+                <h2>Cadastrar usuário</h2>
+                <br />
+                <form action="/" method="post" onsubmit='register()'>
+                    <div>
+                    <label for="name">Nome</label>
+                    <input type="text" name="name" id="name" required>
+                </div>
+                <br />
+                <div>
+                    <label for="senha">Senha</label>
+                    <input type="password" name="senha" id="senha" required>
+                </div>
+                <br />
+
+                <button type="submit">Cadastrar</button>
+
+                </form>
+
+            </div>
+            <br />
             <a href="/logout">Sair</a>
         </div>
     </body>
