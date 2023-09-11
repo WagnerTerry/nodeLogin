@@ -43,9 +43,9 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", (req, res) => {
-    const { nome } = req.body;
+    const { nome, senha } = req.body;
 
-    db.query("insert into users (nome) values (?)", [nome], (err, results) => {
+    db.query("insert into users (nome, senha) values (?, ?)", [nome, senha], (err, results) => {
         if (err) {
             res.status(500).json({ success: false, error: err });
             return;
